@@ -49,7 +49,8 @@ const styles = StyleSheet.create({
         flexDirection:"column"
     },
     statusBar: {
-        height: Platform.OS === 'ios' ? 20 : 0
+        height: Platform.OS === 'ios' ? 20 : 0,
+        backgroundColor:"#63B8FF",
     },
     nav: {
         flexDirection: "row",
