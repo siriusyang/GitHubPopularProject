@@ -16,7 +16,6 @@ import SortableListView from "react-native-sortable-listview";
 import Toast, {DURATION} from 'react-native-easy-toast'
 
 var STORAGE_KEY = 'key_map';
-let order;
 export default class SortPage extends Component {
     constructor(props) {
         super(props);
@@ -51,9 +50,6 @@ export default class SortPage extends Component {
             }).catch((e) => console.log(e.message));
     }
 
-    componentWillMount() {
-        order = Object.keys(this.state.data);
-    }
 
     render() {
         return <View style={{flex: 1}}>
@@ -66,13 +62,9 @@ export default class SortPage extends Component {
             <SortableListView
                 style={{flex: 1}}
                 data={this.state.data}
-                order={order}
+                order={Object.keys(this.state.data)}
                 onRowMoved={e => {
-                    order.splice(e.to, 0, order.splice(e.from, 1)[0]);
-                    // let from= this.state.data[e.from+1];
-                    // let to= this.state.data[e.to];
-                    // this.state.data[e.to]=from;
-                    // this.state.data[e.from+1]=to;
+                    this.state.data.splice(e.to, 0, this.state.data.splice(e.from, 1)[0]);
                     this.forceUpdate();
                 }}
                 renderRow={row => <RowComponent data={row}/>}
@@ -88,7 +80,6 @@ export default class SortPage extends Component {
                 //有用户数据，选中该选中CheckBox
                 if (value !== null) {
                     console.log(`read_sort:${value}`)
-                    order = Object.keys(JSON.parse(value));
                     this.setState({data: JSON.parse(value)});
 
                 }
