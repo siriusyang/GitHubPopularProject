@@ -79,7 +79,6 @@ class TabView extends Component {
         const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         this.state = {
             isLoading: true,
-            jsonData:[],
             dataSource: ds,
         };
     }
@@ -91,7 +90,6 @@ class TabView extends Component {
                 let favoriteJsonData = JSON.parse(value == "" ? "{}" : value);
                 this.setState({
                     isLoading: false,
-                    jsonData: favoriteJsonData,
                     dataSource:this.state.dataSource.cloneWithRows(favoriteJsonData),
 
                 })
@@ -104,7 +102,8 @@ class TabView extends Component {
             time = "since=daily"
             new GitHubTrending().fetchTrending(`https://github.com/trending/${this.props.tabLabel}?${time}`)
                 .then(json => this.setState({
-                    jsonData: json,
+                    isLoading: false,
+                    dataSource:this.state.dataSource.cloneWithRows(json),
                 })).catch((error) => {
                 console.error(error);
             }).done();
@@ -120,12 +119,11 @@ class TabView extends Component {
 
     }
     handleFavoriteProjectSelect = (item) => {
-        let jsData=ArrayUtils.clone(this.state.jsonData);
+        let jsData=ArrayUtils.clone(this.state.dataSource._dataBlob.s1);
         let index = ArrayUtils.indexof(jsData, item);
         if (index> -1) {
             jsData.splice(index, 1);
             this.setState({
-                jsonData:jsData,
                 dataSource:this.state.dataSource.cloneWithRows(jsData),
             });
             AsyncStorage.setItem(Consts.FAVORITE_POPULAR, JSON.stringify(jsData))

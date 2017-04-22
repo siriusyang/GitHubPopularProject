@@ -72,7 +72,6 @@ class TabView extends Component {
         const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         this.state = {
             isLoading: true,
-            jsonData:[],
             dataSource: ds,
         };
     }
@@ -95,7 +94,6 @@ class TabView extends Component {
                     })
                     this.setState({
                         isLoading: false,
-                        jsonData: jsdata,
                         dataSource: this.state.dataSource.cloneWithRows(jsdata)
 
                     })
@@ -116,17 +114,16 @@ class TabView extends Component {
     handleFavoriteProjectSelect = (item) => {
         AsyncStorage.getItem(Consts.FAVORITE_POPULAR).then(value => {
             let favoriteJsonData = JSON.parse(value === null ? "[]" : value);
-            let jsdata =ArrayUtils.clone(this.state.jsonData);
-            let index = ArrayUtils.indexof(jsdata, item);
+            let jsData=ArrayUtils.clone(this.state.dataSource._dataBlob.s1);
+            let index = ArrayUtils.indexof(jsData, item);
             let index2 = ArrayUtils.indexof(favoriteJsonData, item);
             if (index2 > -1) {
                 favoriteJsonData.splice(index2, 1);
                 if (index > -1) {
-                    jsdata[index]["favorited"] = false;
+                    jsData[index]["favorited"] = false;
                 }
                 this.setState({
-                    jsonData: jsdata,
-                    dataSource: this.state.dataSource.cloneWithRows(jsdata),
+                    dataSource: this.state.dataSource.cloneWithRows(jsData),
                 });
 
                 AsyncStorage.setItem(Consts.FAVORITE_POPULAR, JSON.stringify(favoriteJsonData))
@@ -137,12 +134,11 @@ class TabView extends Component {
                 item["favorited"] = true;
                 favoriteJsonData.push(item);
                 if (index > -1) {
-                    jsdata[index]["favorited"] = true;
+                    jsData[index]["favorited"] = true;
 
                 }
                 this.setState({
-                    jsonData: jsdata,
-                    dataSource: this.state.dataSource.cloneWithRows(jsdata),
+                    dataSource: this.state.dataSource.cloneWithRows(jsData),
                 });
                 AsyncStorage.setItem(Consts.FAVORITE_POPULAR, JSON.stringify(favoriteJsonData))
                     .then(() => {
