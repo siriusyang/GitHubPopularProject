@@ -17,7 +17,7 @@ export default class NavigatorApp extends Component {
                 navigationBar={this.navigationBar}
                 renderScene={(route, navigator) => {
                     let Component = route.title;
-                    return <Component navigator={navigator}/>
+                    return <Component navigator={navigator} {...route.params}/>
                 }}
                 configureScene={(route, navigator) => {
                     return Navigator.SceneConfigs.HorizontalSwipeJump

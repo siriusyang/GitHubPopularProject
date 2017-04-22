@@ -9,11 +9,16 @@ import {
     TouchableOpacity,
     ListView,
     RefreshControl,
+    AsyncStorage,
     View
 } from 'react-native';
 import NavigationBar from "../component/NavigationBar"
-import ProjectItem from "../component/ProjectItem"
+import PopularProjectRow from "../component/PopularProjectRow"
 import ScrollableTabView, {DefaultTabBar} from "react-native-scrollable-tab-view"
+import Toast, {DURATION} from 'react-native-easy-toast'
+import DetailPage from "./DetailPage"
+import Consts from "./utils/Consts"
+import ArrayUtils from "./utils/ArrayUtils"
 export default class PopularPage extends Component {
     constructor(props) {
         super(props);
@@ -53,11 +58,10 @@ export default class PopularPage extends Component {
                 >
                     {
                         this.state.languages.map((item, i) => {
-                            return <TabView key={`item_${i}`} tabLabel={item}/>
+                            return <TabView key={`item_${i}`} tabLabel={item} {...this.props}/>
                         })
                     }
                 </ScrollableTabView>
-
             </View>
         );
     }
@@ -65,9 +69,11 @@ export default class PopularPage extends Component {
 class TabView extends Component {
     constructor(props) {
         super(props);
+        const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         this.state = {
             isLoading: true,
-            dataSource: new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2}),
+            jsonData:[],
+            dataSource: ds,
         };
     }
 
@@ -75,22 +81,85 @@ class TabView extends Component {
         this.setState({isLoading: true});
         fetch(`https://api.github.com/search/repositories?q=${this.props.tabLabel}&sort=stars`)
             .then(obj => obj.json())
-            .then(json => this.setState({
-                isLoading: false,
-                dataSource: this.state.dataSource.cloneWithRows(json.items)
+            .then(json => {
+                let jsdata = json.items;
+                AsyncStorage.getItem(Consts.FAVORITE_POPULAR).then(value => {
+                    let favoriteJsonData = JSON.parse(value === null ? "[]" : value);
+                    jsdata.map((item, i) => {
+                        let index2 = ArrayUtils.indexof(favoriteJsonData, item);
+                        if (index2 > -1) {
+                            jsdata[i]["favorited"] = true;
+                        } else {
+                            jsdata[i]["favorited"] = false;
+                        }
+                    })
+                    this.setState({
+                        isLoading: false,
+                        jsonData: jsdata,
+                        dataSource: this.state.dataSource.cloneWithRows(jsdata)
 
-            })).catch((error) => {
+                    })
+                })
+
+
+            }).catch((error) => {
             console.error(error);
         }).done();
     }
     handleRefresh = () => {
         this.loadData();
     }
+    handleProjectSelect = (item) => {
+        this.props.navigator.push({title: DetailPage, params: {news_title: item.full_name, url: item.html_url}})
+
+    }
+    handleFavoriteProjectSelect = (item) => {
+        AsyncStorage.getItem(Consts.FAVORITE_POPULAR).then(value => {
+            let favoriteJsonData = JSON.parse(value === null ? "[]" : value);
+            let jsdata =ArrayUtils.clone(this.state.jsonData);
+            let index = ArrayUtils.indexof(jsdata, item);
+            let index2 = ArrayUtils.indexof(favoriteJsonData, item);
+            if (index2 > -1) {
+                favoriteJsonData.splice(index2, 1);
+                if (index > -1) {
+                    jsdata[index]["favorited"] = false;
+                }
+                this.setState({
+                    jsonData: jsdata,
+                    dataSource: this.state.dataSource.cloneWithRows(jsdata),
+                });
+
+                AsyncStorage.setItem(Consts.FAVORITE_POPULAR, JSON.stringify(favoriteJsonData))
+                    .then(() => {
+                        this.refs.toast.show("取消收藏",DURATION.LENGTH_LONG);
+                    }).catch((e) => console.log(e.message));
+            } else {
+                item["favorited"] = true;
+                favoriteJsonData.push(item);
+                if (index > -1) {
+                    jsdata[index]["favorited"] = true;
+
+                }
+                this.setState({
+                    jsonData: jsdata,
+                    dataSource: this.state.dataSource.cloneWithRows(jsdata),
+                });
+                AsyncStorage.setItem(Consts.FAVORITE_POPULAR, JSON.stringify(favoriteJsonData))
+                    .then(() => {
+                        this.refs.toast.show("收藏成功",DURATION.LENGTH_LONG);
+                    }).catch((e) => console.log(e.message));
+            }
+        }).catch((e) => console.log(e.message));
+
+    }
 
     render() {
         return <View style={{flex: 1}}>
+            <Toast ref="toast"/>
             <ListView dataSource={this.state.dataSource}
-                      renderRow={rowSource => <ProjectItem data={rowSource}/>}
+                      renderRow={rowSource => <PopularProjectRow item={rowSource}
+                                                                 onSelect={() => this.handleProjectSelect(rowSource)}
+                                                                 onPressFavorite={() => this.handleFavoriteProjectSelect(rowSource)}/>}
                       refreshControl={<RefreshControl
                           refreshing={this.state.isLoading}
                           onRefresh={this.handleRefresh}
@@ -98,6 +167,7 @@ class TabView extends Component {
                           title="正在加载..."
                           titleColor="#63B8FF"
                           colors={['#63B8FF']}/>}/>
+
 
         </View >
     }
