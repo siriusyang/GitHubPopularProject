@@ -12,6 +12,7 @@ import PopularPage from "./PopularPage"
 import MyPage from "./my/MyPage"
 import TrendingPage from "./trending/TrendingPage"
 import FavoritePage from "./favorite/FavoritePage"
+import Consts from "./utils/Consts"
 export default class HomePage extends Component {
     constructor(props) {
         super(props)
@@ -26,7 +27,7 @@ export default class HomePage extends Component {
                 <TabNavigator>
                     <TabNavigator.Item
                         selected={this.state.selectedTab === 'popular'}
-                        title="最热"
+                        title={Consts.HOT}
                         titleStyle={styles.tabText}
                         selectedTitleStyle={styles.selectedTabText}
                         renderIcon={() => <Image style={styles.icon}
@@ -39,7 +40,7 @@ export default class HomePage extends Component {
                     </TabNavigator.Item>
                     <TabNavigator.Item
                         selected={this.state.selectedTab === 'trending'}
-                        title="趋势"
+                        title={Consts.TRENDING}
                         titleStyle={styles.tabText}
                         selectedTitleStyle={styles.selectedTabText}
                         renderIcon={() => <Image style={styles.icon}
@@ -52,7 +53,7 @@ export default class HomePage extends Component {
                     </TabNavigator.Item>
                     <TabNavigator.Item
                         selected={this.state.selectedTab === 'favorite'}
-                        title="收藏"
+                        title={Consts.FAVORITE}
                         titleStyle={styles.tabText}
                         selectedTitleStyle={styles.selectedTabText}
                         renderIcon={() => <Image style={styles.icon}
@@ -65,7 +66,7 @@ export default class HomePage extends Component {
                     </TabNavigator.Item>
                     <TabNavigator.Item
                         selected={this.state.selectedTab === 'my'}
-                        title="我的"
+                        title={Consts.MY}
                         titleStyle={styles.tabText}
                         selectedTitleStyle={styles.selectedTabText}
                         renderIcon={() => <Image style={styles.icon}

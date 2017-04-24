@@ -33,13 +33,25 @@ export default class ArrayUtils{
         let result=-1;
         if(array){
             for(let i=0;i<array.length;i++){
-                if(array[i].html_url === item.html_url){
+                if(array[i].id === item.id){
                     result= i;
                 }
             }
         }
         return result;
     }
+    static indexOfTrending(array,item){
+        let result=-1;
+        if(array){
+            for(let i=0;i<array.length;i++){
+                if(array[i].fullName === item.fullName){
+                    result= i;
+                }
+            }
+        }
+        return result;
+    }
+
     static favorited(array,i,item){
         if(array){
             for(let i=0;i<array.length;i++){

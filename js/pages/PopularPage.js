@@ -1,6 +1,7 @@
 /**
  * Created by sirius on 2017-4-13.
  */
+'use strict';
 import React, {Component} from 'react';
 import {
     StyleSheet,
@@ -10,6 +11,7 @@ import {
     ListView,
     RefreshControl,
     AsyncStorage,
+    DeviceEventEmitter,
     View
 } from 'react-native';
 import NavigationBar from "../component/NavigationBar"
@@ -46,7 +48,7 @@ export default class PopularPage extends Component {
         return (
             <View style={styles.container}>
                 <NavigationBar
-                    title={"热门"}
+                    title={Consts.HOT}
                     rightButton={this.getRightButton()}
                 />
                 <ScrollableTabView
@@ -98,12 +100,14 @@ class TabView extends Component {
 
                     })
                 })
-
-
             }).catch((error) => {
             console.error(error);
+            this.setState({
+                isLoading: false,
+            });
         }).done();
     }
+
     handleRefresh = () => {
         this.loadData();
     }
@@ -114,7 +118,7 @@ class TabView extends Component {
     handleFavoriteProjectSelect = (item) => {
         AsyncStorage.getItem(Consts.FAVORITE_POPULAR).then(value => {
             let favoriteJsonData = JSON.parse(value === null ? "[]" : value);
-            let jsData=ArrayUtils.clone(this.state.dataSource._dataBlob.s1);
+            let jsData = ArrayUtils.clone(this.state.dataSource._dataBlob.s1);
             let index = ArrayUtils.indexof(jsData, item);
             let index2 = ArrayUtils.indexof(favoriteJsonData, item);
             if (index2 > -1) {
@@ -128,21 +132,23 @@ class TabView extends Component {
 
                 AsyncStorage.setItem(Consts.FAVORITE_POPULAR, JSON.stringify(favoriteJsonData))
                     .then(() => {
-                        this.refs.toast.show("取消收藏",DURATION.LENGTH_LONG);
+                        console.log("取消收藏")
+                        DeviceEventEmitter.emit(Consts.FAVORITE);
                     }).catch((e) => console.log(e.message));
             } else {
                 item["favorited"] = true;
                 favoriteJsonData.push(item);
                 if (index > -1) {
                     jsData[index]["favorited"] = true;
-
                 }
                 this.setState({
                     dataSource: this.state.dataSource.cloneWithRows(jsData),
                 });
                 AsyncStorage.setItem(Consts.FAVORITE_POPULAR, JSON.stringify(favoriteJsonData))
                     .then(() => {
-                        this.refs.toast.show("收藏成功",DURATION.LENGTH_LONG);
+                        console.log("收藏成功")
+                        DeviceEventEmitter.emit(Consts.FAVORITE);
+                        this.refs.toast.show("收藏成功");
                     }).catch((e) => console.log(e.message));
             }
         }).catch((e) => console.log(e.message));
@@ -151,8 +157,7 @@ class TabView extends Component {
 
     render() {
         return <View style={{flex: 1}}>
-            <Toast ref="toast"/>
-            <ListView dataSource={this.state.dataSource}
+            <ListView style={{flex: 1}} dataSource={this.state.dataSource}
                       renderRow={rowSource => <PopularProjectRow item={rowSource}
                                                                  onSelect={() => this.handleProjectSelect(rowSource)}
                                                                  onPressFavorite={() => this.handleFavoriteProjectSelect(rowSource)}/>}
@@ -163,13 +168,28 @@ class TabView extends Component {
                           title="正在加载..."
                           titleColor="#63B8FF"
                           colors={['#63B8FF']}/>}/>
-
-
+            <Toast ref="toast"/>
         </View >
     }
 
-    componentDidMount = () => {
-        this.loadData()
+    componentDidMount() {
+        this.loadData();
+        //添加事件监听
+        this.listener = DeviceEventEmitter.addListener(Consts.FAVORITE_POPULAR, (n) => {
+            let jsData = ArrayUtils.clone(this.state.dataSource._dataBlob.s1);
+            let index = ArrayUtils.indexof(jsData, n);
+            if (index > -1) {
+                jsData[index]["favorited"] = false;
+                this.setState({
+                    dataSource: this.state.dataSource.cloneWithRows(jsData)
+
+                })
+            }
+        });
+    }
+
+    componentWillUnmount() {
+        this.listener.removeAllListeners();
     }
 }
 

@@ -3,36 +3,34 @@
  */
 import React, {Component} from 'react';
 import {
-    AppRegistry,
     StyleSheet,
     Text,
     View,
     Image,
-    ListView,
     TouchableOpacity
 } from 'react-native';
 
-export default class PopularProjectRow extends Component{
+export default class TrendingProjectRow extends Component {
     static defaultProps = {
         item: {}
     }
 
-    renderContributors(data){
+    renderContributors(data) {
         var views = [];
-        for(var i=0; i < data.length; i++){
-            views.push(<Image key={`key_${i}`} style={{width:22,height:22}} source={{uri:data[i]}}/>);
-            if(i > 1){
+        for (var i = 0; i < data.length; i++) {
+            views.push(<Image key={`key_${i}`} style={{width: 22, height: 22,marginLeft:1}} source={{uri: data[i]}}/>);
+            if (i > 1) {
                 break;
             }
         }
         return views;
     }
 
-    render(){
+    render() {
         var item = this.props.item;
         return <TouchableOpacity
-                activeOpacity={0.5}
-                onPress={this.props.onSelect}>
+            activeOpacity={0.5}
+            onPress={this.props.onSelect}>
             <View style={styles.container}>
                 <Text style={styles.title}>{item.fullName}</Text>
                 <Text style={styles.description}>{item.description}</Text>
@@ -45,8 +43,11 @@ export default class PopularProjectRow extends Component{
                         <Text>星：</Text>
                         <Text>{item.meta}</Text>
                     </View>
-                    <Image source={require("../../res/images/ic_unstar_transparent.png")} style={{width:22,height:22}}/>
-
+                    <TouchableOpacity
+                        activeOpacity={0.5}
+                        onPress={this.props.onPressFavorite}>
+                        <Image source={item.favorited===true?require("../../res/images/ic_star.png"):require("../../res/images/ic_unstar_transparent.png")} style={{width:22,height:22}}/>
+                    </TouchableOpacity>
                 </View>
             </View>
         </TouchableOpacity>;
@@ -55,40 +56,40 @@ export default class PopularProjectRow extends Component{
 
 const styles = StyleSheet.create({
     container: {
-        flex:1,
-        backgroundColor:'#FFF',
-        flexDirection:'column',
-        padding:10,
-        marginLeft:5,
-        marginRight:5,
-        marginVertical:5,
-        borderColor:'#dddddd',
-        borderWidth:0.5,
-        borderRadius:2,
-        shadowColor:'gray',
-        shadowOffset:{width:0.5,height:0.5},
-        shadowRadius:1, //阴影半径
-        shadowOpacity:0.4,
-        elevation:2 //Android 投影
+        flex: 1,
+        backgroundColor: '#FFF',
+        flexDirection: 'column',
+        padding: 10,
+        marginLeft: 5,
+        marginRight: 5,
+        marginVertical: 5,
+        borderColor: '#dddddd',
+        borderWidth: 0.5,
+        borderRadius: 2,
+        shadowColor: 'gray',
+        shadowOffset: {width: 0.5, height: 0.5},
+        shadowRadius: 1, //阴影半径
+        shadowOpacity: 0.4,
+        elevation: 2 //Android 投影
     },
-    title:{
-        fontSize:16,
-        marginBottom:2,
-        color:'#212121'
+    title: {
+        fontSize: 16,
+        marginBottom: 2,
+        color: '#212121'
     },
-    description:{
-        fontSize:14,
-        marginBottom:2,
-        color:'#757575'
+    description: {
+        fontSize: 14,
+        marginBottom: 2,
+        color: '#757575'
     },
-    bottom:{
-        flexDirection:'row',
-        alignItems:'center',
-        justifyContent:'space-between'
+    bottom: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between'
     },
-    bottomTextWrapper:{
-        flexDirection:'row',
-        alignItems:'center'
+    bottomTextWrapper: {
+        flexDirection: 'row',
+        alignItems: 'center'
     }
 
 });
