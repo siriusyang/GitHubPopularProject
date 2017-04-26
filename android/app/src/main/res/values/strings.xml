@@ -1,3 +1,4 @@
 <resources>
+    <string moduleConfig="true" name="reactNativeCodePush_androidDeploymentKey">FXU2FKU4IpCwO0JWx-0HqI_ExhZ94yZ5J6DAG</string>
     <string name="app_name">GitHubPopularProject</string>
 </resources>

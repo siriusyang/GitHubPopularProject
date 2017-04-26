@@ -32,11 +32,11 @@ export default class MyPage extends Component {
     }
     static defaultProps = {
         items: [{
-            'name': '自定义分类',
+            'name': '自定义分类2',
             'image': require('../../../res/images/ic_custom_language.png'),
             'press': CUSTOM_PAGE,
         }, {
-            'name': '分类排序',
+            'name': '分类排序6',
             'image': require('../../../res/images/ic_swap_vert.png'),
             'press': SORT_PAGE
         }]

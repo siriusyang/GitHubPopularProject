@@ -173,7 +173,7 @@ class TabView extends Component {
     }
 
     componentWillUnmount() {
-        this.listener.removeAllListeners();
+        this.listener.remove();
     }
 }
 
