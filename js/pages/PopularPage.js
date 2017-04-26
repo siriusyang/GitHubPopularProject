@@ -21,6 +21,7 @@ import Toast, {DURATION} from 'react-native-easy-toast'
 import DetailPage from "./DetailPage"
 import Consts from "./utils/Consts"
 import ArrayUtils from "./utils/ArrayUtils"
+import AndroidToast from "../component/AndroidToast"
 export default class PopularPage extends Component {
     constructor(props) {
         super(props);
@@ -148,7 +149,7 @@ class TabView extends Component {
                     .then(() => {
                         console.log("收藏成功")
                         DeviceEventEmitter.emit(Consts.FAVORITE);
-                        this.refs.toast.show("收藏成功");
+                        AndroidToast.show("收藏成功", AndroidToast.SHORT);
                     }).catch((e) => console.log(e.message));
             }
         }).catch((e) => console.log(e.message));

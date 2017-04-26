@@ -29,16 +29,16 @@ export default class NavigatorApp extends Component {
     }
 
     componentDidMount() {
-        codePush.sync({
-            updateDialog: {
-                appendReleaseDescription: true,
-                descriptionPrefix: '\n\n更新内容：\n',
-                title: '更新',
-                mandatoryUpdateMessage: '',
-                mandatoryContinueButtonLabel: '更新',
-            },
-            mandatoryInstallMode: codePush.InstallMode.IMMEDIATE,
-            deploymentKey: 'FXU2FKU4IpCwO0JWx-0HqI_ExhZ94yZ5J6DAG',
-        });
+        // codePush.sync({
+        //     updateDialog: {
+        //         appendReleaseDescription: true,
+        //         descriptionPrefix: '\n\n更新内容：\n',
+        //         title: '更新',
+        //         mandatoryUpdateMessage: '',
+        //         mandatoryContinueButtonLabel: '更新',
+        //     },
+        //     mandatoryInstallMode: codePush.InstallMode.IMMEDIATE,
+        //     deploymentKey: 'FXU2FKU4IpCwO0JWx-0HqI_ExhZ94yZ5J6DAG',
+        // });
     }
 }

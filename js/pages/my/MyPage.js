@@ -15,10 +15,12 @@ import {
 } from 'react-native';
 import NavigationBar from "../../component/NavigationBar"
 import CustomKeyPage from "./CustomKeyPage"
+import AndroidRoute from "../../component/AndroidRoute"
 import SortPage from "./SortPage"
 import Consts from "../utils/Consts"
 const CUSTOM_PAGE = 'CustomKeyPage';
-const SORT_PAGE = 'CustomKeyPage';
+const SORT_PAGE = 'SortPage';
+const ROUTE = 'ROUTE';
 export default class MyPage extends Component {
     goToCustomKeyPage = () => {
         this.props.navigator.push({
@@ -39,6 +41,10 @@ export default class MyPage extends Component {
             'name': '分类排序6',
             'image': require('../../../res/images/ic_swap_vert.png'),
             'press': SORT_PAGE
+        }, {
+            'name': '原生跳转',
+            'image': require('../../../res/images/ic_swap_vert.png'),
+            'press': ROUTE
         }]
     }
     press = (type) => {
@@ -46,6 +52,9 @@ export default class MyPage extends Component {
             this.sortPage();
         } else if (type === CUSTOM_PAGE) {
             this.goToCustomKeyPage();
+        } else if (ROUTE === type) {
+            let json = "ddddd";
+            AndroidRoute.OpenActivity("ww://android/TowActivity?message=kkkkk");
         }
     }
 
