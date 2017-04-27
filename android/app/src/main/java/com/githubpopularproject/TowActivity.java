@@ -1,9 +1,12 @@
 package com.githubpopularproject;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
+
+import sirius.nativelibrary.route.AndroidRoute;
 
 /**
  * Created by sirius on 2017-4-26.
@@ -17,8 +20,9 @@ public class TowActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tow);
         tvPar = (TextView) findViewById(R.id.tvPar);
-        String par = getIntent().getStringExtra("message");
-        par = par == null ? "" : par;
-        tvPar.setText("参数=" + par);
+        Uri uri = getIntent().getData();
+        String message = AndroidRoute.getParameters(uri);
+        message = message == null ? "" : message;
+        tvPar.setText("参数=" + message);
     }
 }

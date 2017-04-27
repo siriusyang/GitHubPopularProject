@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 import NavigationBar from "../../component/NavigationBar"
 import CustomKeyPage from "./CustomKeyPage"
-import AndroidRoute from "../../component/AndroidRoute"
+import AndroidNavigator from "../../component/AndroidNavigator"
 import SortPage from "./SortPage"
 import Consts from "../utils/Consts"
 const CUSTOM_PAGE = 'CustomKeyPage';
@@ -54,7 +54,8 @@ export default class MyPage extends Component {
             this.goToCustomKeyPage();
         } else if (ROUTE === type) {
             let json = "ddddd";
-            AndroidRoute.OpenActivity("ww://android/TowActivity?message=kkkkk");
+            AndroidNavigator.OpenActivity("/TowActivity", json);
+            // AndroidNavigator.OpenActivitySimple();
         }
     }
 

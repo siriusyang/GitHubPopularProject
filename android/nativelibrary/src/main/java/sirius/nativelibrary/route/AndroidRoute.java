@@ -12,6 +12,8 @@ import com.facebook.react.bridge.ReactMethod;
  */
 
 public class AndroidRoute extends ReactContextBaseJavaModule {
+    private final static String PARAMETERS = "parameters";
+
     public AndroidRoute(ReactApplicationContext reactContext) {
         super(reactContext);
     }
@@ -22,10 +24,27 @@ public class AndroidRoute extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void OpenActivity(String scheme) {
-        final Uri myUri = Uri.parse(scheme);
+    public void OpenActivitySimple(String uriString) {
+        final Uri uri = Uri.parse(uriString);
         final Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(myUri);
+        intent.setData(uri);
         getCurrentActivity().startActivity(intent);
+    }
+
+    @ReactMethod
+    public void OpenActivity(String scheme, String host, String path, String parameters) {
+        final Uri uri = new Uri.Builder().scheme(scheme).authority(host).path(path)
+                .appendQueryParameter(PARAMETERS, parameters).build();
+        final Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(uri);
+        getCurrentActivity().startActivity(intent);
+    }
+
+    public static String getParameters(Uri uri) {
+        return getParameters(uri, PARAMETERS);
+    }
+
+    public static String getParameters(Uri uri, String parameters) {
+        return uri == null ? "" : uri.getQueryParameter(parameters);
     }
 }
